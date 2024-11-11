@@ -1,3 +1,4 @@
+import pygame
 from random import choice
 
 from common.constants import PADDLE_STARTING_POS, PADDLE
@@ -11,6 +12,7 @@ class Paddle:
         self.speed = 3
         self.screen_width = screen_width
         self.image = image
+        self.paddle_rect = pygame.Rect(self.left, self.top, self.width, self.height)
 
     def draw(self, screen):
         screen.blit(self.image, (self.left, self.top))
@@ -21,10 +23,12 @@ class Paddle:
     def move_left(self):
         if self.left > 0:
             self.left = self.left - self.speed
+            self.paddle_rect.x = self.left
 
     def move_right(self):
         if self.left < self.screen_width - self.width:
             self.left = self.left + self.speed
+            self.paddle_rect.x = self.left
 
 
 class Paddles:

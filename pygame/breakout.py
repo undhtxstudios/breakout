@@ -72,8 +72,9 @@ class Breakout:
             self.screen.fill(BACKGROUND)
             self.handle_event()
             self.draw_assets()
-            self.assets[BALLS].update(self.resolution, self.assets[BRICKS])
+            self.assets[BALLS].update(self.resolution, self.assets[BRICKS].bricks, 
+                                      self.assets[PADDLES].paddles)
             pygame.display.update()
 
 
-Breakout((640, 480), 60, "original").run()
+#Breakout((640, 480), 60, "original").run()

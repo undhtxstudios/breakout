@@ -1,3 +1,4 @@
+import pygame
 from common.constants import BRICK_WIDTH, BRICK_HEIGHT, BRICK_SPACE, BRICK
 from common.utils import load_images
 from random import choice
@@ -8,9 +9,11 @@ class Brick:
         self.top, self.left, self.width, self.height = dimension
         self.is_broken = is_broken
         self.image = image
+        self.brick_rect =  pygame.Rect(self.left, self.top, self.width, self.height)
 
     def draw(self, screen):
         screen.blit(self.image, (self.left, self.top))
+        #pygame.Rect(self.left, self.top, self.width, self.height)
 
 
 class Bricks:

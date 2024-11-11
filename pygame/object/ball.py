@@ -1,3 +1,4 @@
+import math
 import random
 import pygame
 from common.constants import BALL, PADDLE_STARTING_POS
@@ -12,6 +13,8 @@ class Ball:
         self.speed = speed
         self.image = image
         self.direction = [1, 1]  # X-direction, Y-direction
+        self.ball_rect = pygame.Rect(self.x - 10, self.y - 10, 10 * 2, 10 * 2)
+        self.ball_angle = random.uniform(math.radians(30), math.radians(150))
 
     def draw(self, screen):
         # to do: make it a circle, or mask for collisions?
@@ -21,30 +24,29 @@ class Ball:
     def change_speed(self, speed):
         self.speed = speed
 
-    def update(self, resolution, bricks):
+    def update(self, resolution, bricks, paddles):
         self.check_wall_collision(resolution=resolution)
-        self.check_paddle_collision()
+        self.check_paddle_collision(paddles)
         self.check_brick_collision(bricks)
-        self.x += self.speed * self.direction[0]
-        self.y += self.speed * self.direction[1]
+        self.x += self.speed * self.direction[0] * math.cos(self.ball_angle)
+        self.y += self.speed * self.direction[1] * math.sin(self.ball_angle)
+        self.ball_rect.x = self.x
+        self.ball_rect.y = self.y
 
-    def check_paddle_collision(self):
-        ball_rect = pygame.Rect(self.x - 10, self.y - 10, 10 * 2, 10 * 2)
-        paddle_rect = pygame.Rect(
-            PADDLE_STARTING_POS[1],
-            PADDLE_STARTING_POS[0],
-            PADDLE_STARTING_POS[2],
-            PADDLE_STARTING_POS[3],
-        )
+    def check_paddle_collision(self, paddles):
+        paddle = paddles[0]
+        paddle_rect = paddles[0].paddle_rect
 
-        if ball_rect.colliderect(paddle_rect):
-            self.direction[1] = -1 * self.direction[1]  # Opposite y-direction
+        if self.ball_rect.colliderect(paddle_rect):
+            hit_position = (self.x - (paddle.left + paddle.width / 2)) / (paddle.width / 2)
+            max_bounce_angle = math.radians(75)
+
+            ball_angle = hit_position * max_bounce_angle
+
+            self.direction[1] = -1 * self.direction[1] * math.cos(ball_angle) # Opposite y-direction
             self.direction[0] = (
-                random.choice([-1, 1]) * self.direction[0]
+                self.direction[0] * math.sin(ball_angle)
             )  # Random choice for x-direction
-
-        ball_rect.x = self.x
-        ball_rect.y = self.y
 
     def check_wall_collision(self, resolution):
         if self.x <= 0 or self.x >= resolution[0]:
@@ -56,7 +58,16 @@ class Ball:
         #     return running
 
     def check_brick_collision(self, bricks):
-        pass
+        for brick in bricks:
+            if self.ball_rect.colliderect(brick.brick_rect):
+                bricks.remove(brick)
+                self.direction[1] = -1 * self.direction[1]
+                self.direction[0] = (
+                -1 * self.direction[0]
+            )
+                break
+        self.ball_rect.x = self.x
+        self.ball_rect.y = self.y
 
 
 class Balls:
@@ -82,9 +93,9 @@ class Balls:
         if ball in self.balls:
             self.balls.remove(ball)
 
-    def update(self, resolution):
+    def update(self, resolution, bricks, paddles):
         for ball in self.balls:
-            ball.update(resolution=resolution)
+            ball.update(resolution=resolution, bricks=bricks, paddles=paddles)
 
     def draw(self, screen):
         for ball in self.balls:
