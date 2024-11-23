@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      // "*": ["*", "../../engines/littlejs/engine/src/*", "../../engines/littlejs/engine/dist/*", "../../engines/littlejs/engine/plugins/*"]
+      "*": ["*", "engine/dist/*", "engine/src/*", "engine/plugins/*"]
+    }
+  },
+  "include": ["./*", "./engine/**/*"],
+  "exclude": ["node_modules"]
+}
