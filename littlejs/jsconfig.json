@@ -6,6 +6,6 @@
       "*": ["*", "engine/dist/*", "engine/src/*", "engine/plugins/*"]
     }
   },
-  "include": ["./*", "./engine/**/*"],
+  "include": ["./*", "./engine/**/*", "./object/**/*"],
   "exclude": ["node_modules"]
 }
